@@ -69,7 +69,9 @@
         padding-bottom: 2em;
     }
 
-    input, button {
+
+
+    button {
         margin: 4px;
     }
 
@@ -83,5 +85,11 @@
         display: block;
 
         margin: 2em auto 0 auto;
+    }
+
+    @media (max-width: 608px) {
+        input {
+            width: 40%;
+        }
     }
 </style>

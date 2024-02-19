@@ -38,8 +38,8 @@
             <thead>
             <tr>
                 <th>Date</th>
-                <th>Time</th>
-                <th>Liga</th>
+                <th class="responsiveness">Time</th>
+                <th class="responsiveness">Liga</th>
                 <th>Teams</th>
             </tr>
             </thead>
@@ -47,8 +47,8 @@
             {#each events as event}
                 <tr on:click={() => go(event.id)}>
                     <td style="font-style: italic">{event.dateVenue}</td>
-                    <td>{formatTime(event.timeVenueUTC)}</td>
-                    <td>{event.originCompetitionName}</td>
+                    <td class="responsiveness">{formatTime(event.timeVenueUTC)}</td>
+                    <td class="responsiveness">{event.originCompetitionName}</td>
                     <td>{event.homeTeam?.name} vs {event.awayTeam?.name}</td>
                     <td style="display: none;">{event.id}</td>
                 </tr>
@@ -88,8 +88,17 @@
     .spaceholder {
         margin-bottom: 2em;
     }
-    
+
+    .statistics-table {
+        width: 100%;
+        max-width: 100%;
+        table-layout: fixed;
+        box-sizing: border-box;
+    }
+
     @media (max-width: 410px) {
-        
+        .responsiveness {
+            display: none;
+        }
     }
 </style>
