@@ -1,13 +1,30 @@
 <script>
     import sportData from '../../src/json/sportData.json';
     import {push} from 'svelte-spa-router';
+    import {events} from "../../scripts/store.js";
+    import { onMount } from 'svelte';
+
+
 
     let currentPage = 1;
     const itemsPerPage = 10;
-    let events = sportData.data.map((event, index) => ({
+    let jsonEvents = sportData.data.map((event, index) => ({
         ...event,
         id: index + 1
     }));
+    let subscribedEvents = [];
+    events.subscribe($events => {
+        subscribedEvents = $events;
+    });
+
+    onMount(() => {
+        events.update(current => {
+            if (current.length === 0) {
+                return jsonEvents;
+            }
+            return current;
+        });
+    });
 
     function nextPage() {
         currentPage += 1;
@@ -27,7 +44,7 @@
 
     $: startIndex = (currentPage - 1) * itemsPerPage;
     $: endIndex = startIndex + itemsPerPage;
-    $: currentPageStats = events.slice(startIndex, endIndex);
+    $: currentPageStats = subscribedEvents.slice(startIndex, endIndex);
 </script>
 
 <button on:click={() => push('/add')}>+ Event</button>
@@ -44,7 +61,7 @@
             </tr>
             </thead>
             <tbody>
-            {#each events as event}
+            {#each jsonEvents && subscribedEvents as event}
                 <tr on:click={() => go(event.id)}>
                     <td style="font-style: italic">{event.dateVenue}</td>
                     <td class="responsiveness">{formatTime(event.timeVenueUTC)}</td>
@@ -62,7 +79,7 @@
         {:else}
             <div class="spaceholder"></div>
         {/if}
-        {#if events.length > endIndex}
+        {#if jsonEvents.length > endIndex}
             <button on:click={nextPage}>Weiter</button>
         {/if}
     </div>

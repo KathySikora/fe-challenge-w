@@ -1,20 +1,48 @@
 <script>
     import {push} from "svelte-spa-router";
+    import { events } from "../../scripts/store.js";
 
     let event = {
+        id: '',
         homeTeamName: '',
         awayTeamName: '',
         dateVenue: '',
         timeVenueUTC: '',
         season: '',
         stageName: '',
-        originCompetitionName: ''
+        originCompetitionName: '',
+        homeGoals: '',
+        awayGoals: ''
     };
 
     function handleSubmit() {
-        console.log(event);
-        return false;
+        events.update(currentEvents => {
+            const nextId = currentEvents.length + 6;
+            const newEvent = {
+                id: nextId,
+                season: parseInt(event.season, 10),
+                timeVenueUTC: event.timeVenueUTC,
+                dateVenue: event.dateVenue,
+                homeTeam: {
+                    name: event.homeTeamName
+                },
+                awayTeam: {
+                    name: event.awayTeamName
+                },
+                result: {
+                    homeGoals: parseInt(event.homeGoals, 10),
+                    awayGoals: parseInt(event.awayGoals, 10),
+                },
+                stage: {
+                    name: event.stageName,
+                },
+                originCompetitionName: event.originCompetitionName
+            };
+            return [...currentEvents, newEvent];
+        });
+        push('/');
     }
+
 </script>
 
 <div class="widget">
@@ -51,9 +79,17 @@
                     <td><input type="text" bind:value={event.originCompetitionName} placeholder="AFC Champions League"/>
                     </td>
                 </tr>
+                <tr>
+                    <td>Home Goals:</td>
+                    <td><input type="number" bind:value={event.homeGoals} placeholder="0"/></td>
+                </tr>
+                <tr>
+                    <td>Away Goals:</td>
+                    <td><input type="number" bind:value={event.awayGoals} placeholder="0"/></td>
+                </tr>
             </table>
             <div class="buttons">
-                <button type="submit" on:click={() => push('/')}>Add Event</button>
+                <button type="submit">Add Event</button>
                 <button type="button" on:click={() => push('/')}>cancel</button>
             </div>
         </form>

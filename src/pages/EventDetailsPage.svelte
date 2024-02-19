@@ -1,9 +1,14 @@
 <script>
+    import { onMount } from 'svelte';
     import sportData from '../../src/json/sportData.json';
+    import { events } from "../../scripts/store.js"; // Assuming this is your store
 
-    let eventId = getEventIdFromUrl();
-
-    let event = findEventById(eventId);
+    let eventId;
+    let event;
+    let subscribedEvents = [];
+    events.subscribe($events => {
+        subscribedEvents = $events;
+    });
 
     function getEventIdFromUrl() {
         const hashPath = window.location.hash.substring(1);
@@ -12,12 +17,18 @@
         return pathSegments[eventIdIndex];
     }
 
-    console.log(eventId);
+    onMount(() => {
+        eventId = getEventIdFromUrl();
+        findEventById(eventId);
+    });
 
     function findEventById(eventId) {
         const numericEventId = Number(eventId);
-
-        return sportData.data.find(event => event.id === numericEventId);
+        let foundEvent = sportData.data.find(event => event.id === numericEventId);
+        if (!foundEvent) {
+            foundEvent = subscribedEvents.find(event => event.id === numericEventId);
+        }
+        event = foundEvent;
     }
 </script>
 
