@@ -1,6 +1,6 @@
 <script>
     import sportData from '../../src/json/sportData.json';
-    import { push } from 'svelte-spa-router';
+    import {push} from 'svelte-spa-router';
 
     let currentPage = 1;
     const itemsPerPage = 10;
@@ -30,7 +30,8 @@
     $: currentPageStats = events.slice(startIndex, endIndex);
 </script>
 
-<main>
+<button on:click={() => push('/add')}>+ Event</button>
+<div class="widget">
     <div class="content-wrapper">
         <h1>EVENT CALENDAR</h1>
         <table class="statistics-table">
@@ -65,14 +66,9 @@
             <button on:click={nextPage}>Weiter</button>
         {/if}
     </div>
-
-</main>
+</div>
 
 <style>
-    .content-wrapper {
-        padding: 0 2em 0 2em;
-        max-width: unset;
-    }
 
     .pagination {
         display: flex;
@@ -89,30 +85,11 @@
         text-align: center;
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: left;
-    }
     .spaceholder {
         margin-bottom: 2em;
     }
-
-    th, td {
-        padding: 10px 15px;
-        border-bottom: 2px solid lightgray;
-    }
-
-    th {
-        font-weight: bold;
-    }
-
-    tbody tr:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
-
-    tbody tr:last-child td {
-        border-bottom: none;
+    
+    @media (max-width: 410px) {
+        
     }
 </style>

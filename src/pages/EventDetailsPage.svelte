@@ -11,6 +11,7 @@
         const eventIdIndex = pathSegments.findIndex(segment => segment === 'event') + 1;
         return pathSegments[eventIdIndex];
     }
+
     console.log(eventId);
 
     function findEventById(eventId) {
@@ -20,15 +21,53 @@
     }
 </script>
 
-<main>
-    {#if event}
-        <h1>Event Details: {event.homeTeam?.name || '/'} vs {event.awayTeam?.name || '/'}</h1>
-        <p>Date: {event.dateVenue || '/'}</p>
-        <p>Time: {event.timeVenueUTC || '/'}</p>
-        <p>Saison: {event.season || '/'}</p>
-        <p>Runde: {event.stage.name || '/'}</p>
-        <p>Liga: {event.originCompetitionName || '/'}</p>
-    {:else}
-        <p>Event not found.</p>
-    {/if}
-</main>
+<div class="widget">
+    <div class="content-wrapper">
+        {#if event}
+            <h1>EVENT DETAILS</h1>
+            <table>
+                <tr>
+                    <td>Teams:</td>
+                    <td>{event.homeTeam?.name || '/'} vs {event.awayTeam?.name || '/'}</td>
+                </tr>
+                <tr>
+                    <td>Date:</td>
+                    <td>{event.dateVenue || '/'}</td>
+                </tr>
+                <tr>
+                    <td>Time:</td>
+                    <td>{event.timeVenueUTC || '/'}</td>
+                </tr>
+                <tr>
+                    <td>Saison:</td>
+                    <td>{event.season || '/'}</td>
+                </tr>
+                <tr>
+                    <td>Runde:</td>
+                    <td>{event.stage?.name || '/'}</td>
+                </tr>
+                <tr>
+                    <td>Liga:</td>
+                    <td>{event.originCompetitionName || '/'}</td>
+                </tr>
+            </table>
+        {:else}
+            <p>Event not found.</p>
+        {/if}
+    </div>
+</div>
+
+<style>
+    .content-wrapper {
+        padding-bottom: 2em;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    table tr td:first-child {
+        font-weight: bold;
+    }
+
+</style>
