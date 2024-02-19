@@ -1,13 +1,30 @@
 <script>
     import sportData from '../../src/json/sportData.json';
-    import { push } from 'svelte-spa-router';
+    import {push} from 'svelte-spa-router';
+    import {events} from "../../scripts/store.js";
+    import { onMount } from 'svelte';
+
+
 
     let currentPage = 1;
     const itemsPerPage = 10;
-    let events = sportData.data.map((event, index) => ({
+    let jsonEvents = sportData.data.map((event, index) => ({
         ...event,
         id: index + 1
     }));
+    let subscribedEvents = [];
+    events.subscribe($events => {
+        subscribedEvents = $events;
+    });
+
+    onMount(() => {
+        events.update(current => {
+            if (current.length === 0) {
+                return jsonEvents;
+            }
+            return current;
+        });
+    });
 
     function nextPage() {
         currentPage += 1;
@@ -27,27 +44,28 @@
 
     $: startIndex = (currentPage - 1) * itemsPerPage;
     $: endIndex = startIndex + itemsPerPage;
-    $: currentPageStats = events.slice(startIndex, endIndex);
+    $: currentPageStats = subscribedEvents.slice(startIndex, endIndex);
 </script>
 
-<main>
+<button on:click={() => push('/add')}>+ Event</button>
+<div class="widget">
     <div class="content-wrapper">
         <h1>EVENT CALENDAR</h1>
         <table class="statistics-table">
             <thead>
             <tr>
                 <th>Date</th>
-                <th>Time</th>
-                <th>Liga</th>
+                <th class="responsiveness">Time</th>
+                <th class="responsiveness">Liga</th>
                 <th>Teams</th>
             </tr>
             </thead>
             <tbody>
-            {#each events as event}
+            {#each jsonEvents && subscribedEvents as event}
                 <tr on:click={() => go(event.id)}>
                     <td style="font-style: italic">{event.dateVenue}</td>
-                    <td>{formatTime(event.timeVenueUTC)}</td>
-                    <td>{event.originCompetitionName}</td>
+                    <td class="responsiveness">{formatTime(event.timeVenueUTC)}</td>
+                    <td class="responsiveness">{event.originCompetitionName}</td>
                     <td>{event.homeTeam?.name} vs {event.awayTeam?.name}</td>
                     <td style="display: none;">{event.id}</td>
                 </tr>
@@ -61,18 +79,13 @@
         {:else}
             <div class="spaceholder"></div>
         {/if}
-        {#if events.length > endIndex}
+        {#if jsonEvents.length > endIndex}
             <button on:click={nextPage}>Weiter</button>
         {/if}
     </div>
-
-</main>
+</div>
 
 <style>
-    .content-wrapper {
-        padding: 0 2em 0 2em;
-        max-width: unset;
-    }
 
     .pagination {
         display: flex;
@@ -89,30 +102,20 @@
         text-align: center;
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: left;
-    }
     .spaceholder {
         margin-bottom: 2em;
     }
 
-    th, td {
-        padding: 10px 15px;
-        border-bottom: 2px solid lightgray;
+    .statistics-table {
+        width: 100%;
+        max-width: 100%;
+        table-layout: fixed;
+        box-sizing: border-box;
     }
 
-    th {
-        font-weight: bold;
-    }
-
-    tbody tr:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
-
-    tbody tr:last-child td {
-        border-bottom: none;
+    @media (max-width: 410px) {
+        .responsiveness {
+            display: none;
+        }
     }
 </style>
